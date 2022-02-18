@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useAppSelector } from '../../app/hooks';
-import { selectAccounts } from '../accounts/accountsSlice';
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { selectAccounts, exchange } from '../accounts/accountsSlice';
 import { Currency, selectCurrencies, selectRates } from '../rates/ratesSlice';
 import ExchangeInput from './ExchangeInput';
 import { computeAmountsFromChange, convert } from '../../app/helpers';
@@ -9,6 +9,7 @@ import { Amount } from './ExchangeInput';
 
 export default function Exchange(): JSX.Element | null {
 
+  const dispatch = useAppDispatch();
   const currencies = useAppSelector(selectCurrencies);
   const { rates, status: ratesStatus } = useAppSelector(selectRates);
   const { accounts, status: accountsStatus } = useAppSelector(selectAccounts)
@@ -27,6 +28,7 @@ export default function Exchange(): JSX.Element | null {
 
   const [disabled, setDisabled] = React.useState(true);
 
+
   // Compute a new rate when rates or amounts currencies are updated
   React.useEffect(() => {
     const newRate = convert(1, amounts[1].currency as Currency, amounts[0].currency as Currency, rates);
@@ -35,26 +37,40 @@ export default function Exchange(): JSX.Element | null {
 
   // Set disabled status
   React.useEffect(() => {
-    if (ratesStatus !== 'loaded' || amounts[0].value === '0' || amounts[1].value === '0' || amounts[0].status !== '' || amounts[1].status !== '') {
-      setDisabled(true);
-    } else {
-      setDisabled(false)
-    }
-  }, [ratesStatus, amounts]);
+    console.log('effect')
+
+    setDisabled(
+      ratesStatus !== 'loaded'
+      || accountsStatus !== 'loaded'
+      || amounts[0].value === '0'
+      || amounts[1].value === '0'
+      || amounts[0].status !== ''
+      || amounts[1].status !== ''
+    );
+  }, [ratesStatus, amounts, accountsStatus]);
+
+
+  React.useEffect(() => {
+    setAmounts(amounts.map((amount) => ({
+      ...amount,
+      status: (parseFloat(amount.value) > accounts[amount.currency as Currency]) ? 'exceeded' : ''
+    })))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accounts])
 
   // No render until accounts and rates are retrived.
   if (accountsStatus === 'init' || ratesStatus === 'init') {
     return null;
   }
 
-  // When an amound is changed
+  // When an amount is changed
   const onChangeAmount = (rawValue: string, amountIndex: number): void => {
     const newAmounts = computeAmountsFromChange(
       rawValue,
       amountIndex,
       amounts,
       accounts,
-      rates
+      rates,
     );
 
     setAmounts(newAmounts)
@@ -94,9 +110,15 @@ export default function Exchange(): JSX.Element | null {
   // Reverse accounts order
   const onRevertClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const newAmounts = [
-      amounts[1],
-      amounts[0],
-    ];
+      {
+        ...amounts[1],
+        status: (parseFloat(amounts[1].value) > accounts[amounts[1].currency as Currency]) ? 'exceeded' : ''
+      },
+      {
+        ...amounts[0],
+        status: ''
+      },
+    ]
     setAmounts(newAmounts);
   }
 
@@ -104,10 +126,14 @@ export default function Exchange(): JSX.Element | null {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
-
-    console.log('SUBMIT', amounts)
     if (!disabled) {
-      console.log('Exchange agreed')
+      dispatch(exchange({
+        from: {
+          currency: amounts[0].currency as Currency,
+          amount: amounts[0].value,
+        },
+        to: amounts[1].currency as Currency
+      }))
     }
   }
 

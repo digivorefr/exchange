@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import { fetchRates } from './ratesAPI';
+import * as api from './ratesAPI';
 
-export const currencyPropTypes = ['USD', 'GBP', 'EUR'];
 export type Currency = 'USD' | 'GBP' | 'EUR';
+export const allowedCurrencies: Currency[] = ['USD', 'GBP', 'EUR'];
+export const currencyPropTypes = allowedCurrencies;
 
 
 export interface Rates {
@@ -28,7 +29,7 @@ export interface ConvertCurrencyPayload {
 
 const initialState: RatesState = {
   base: 'USD',
-  currencies: ['USD', 'GBP', 'EUR'],
+  currencies: allowedCurrencies,
   rates: {
     USD: 100000,
     GBP: 100000,
@@ -41,7 +42,7 @@ const initialState: RatesState = {
 export const refreshRates = createAsyncThunk(
   'rates/refresh',
   async () => {
-    const response = await fetchRates();
+    const response = await api.fetchRates();
     if (response === undefined) return null;
     // The value we return becomes the `fulfilled` action payload
     const { GBP, EUR } = response.data;

@@ -83,7 +83,6 @@ export const computeAmountsFromChange = (updatedAmount: string, amountIndex: num
 
   // Build new amounts object with new parameters
   const newAmounts = amounts.map((amount, index) => {
-
     // Set new value to proper amount.
     if (index === amountIndex) return {
       ...amount,
