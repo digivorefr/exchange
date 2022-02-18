@@ -4,6 +4,38 @@ import { selectAccounts } from '../accounts/accountsSlice';
 import { selectCurrencies, selectRates } from '../rates/ratesSlice';
 import ExchangeInput from './ExchangeInput';
 
+const cleanAmount = (amount: string): string | null | undefined => {
+  // Allow only digits and dots
+  const allowed = (amount
+    .replace(/,/gi, '.')
+    .match(/[\d.]/gi) || [])
+    .join('');
+
+  // Retrieve regexp matches, filter and transform them into a string
+  const amountRegEx = /([\d]*)(\.*)?/g;
+  const cleaned = Array.from(allowed.matchAll(amountRegEx), m => m)
+    .map((match) => match.filter((group, index) => index > 0
+      && ![undefined, ''].includes(group)
+    ))
+    .reduce((previous, current) => [...previous, ...current])
+    .join('');
+
+  // Empty or non comptable values handling
+  if (cleaned === '' || isNaN(parseFloat(cleaned))) {
+    return undefined;
+  }
+
+  // Prevent adding values with several dots
+  if ((cleaned.match(/\./g) || []).length > 1) {
+    return null;
+  }
+
+  const suffix = (cleaned[cleaned.length - 1] === '.') ? '.' : '';
+  // Prevent more than 2 decimals
+  const parsedAmount = Math.round(parseFloat(cleaned) * 100) / 100;
+
+  return `${parsedAmount}${suffix}`;
+}
 
 export default function Exchange(): JSX.Element | null {
 
@@ -18,30 +50,19 @@ export default function Exchange(): JSX.Element | null {
   }
 
   const onChangeAmount = (e: React.FormEvent<HTMLInputElement>): void => {
-    const cleanedAmount = ((e.currentTarget.value
-      .match(/[\d.]/gi) || [])
-      .join('')
-      .match(/^(\d*)(\.)?(\d{2})?/) || [])
-      .join('');
+    const cleanedAmount = cleanAmount(e.currentTarget.value);
 
     if (cleanedAmount === undefined) {
       setAmounts(['0', amounts[1]]);
       return;
     }
-    const amount = parseFloat(cleanedAmount);
 
-    if (isNaN(amount)) {
-      setAmounts(['0', amounts[1]]);
+    if (cleanedAmount === null) {
       return;
     }
 
-    const endsWithDecimalSeparator = cleanedAmount.match(/[.]$/);
-
-    console.log('change amount', e.currentTarget.value, cleanedAmount, amount);
     setAmounts([
-      (endsWithDecimalSeparator
-        ? `${cleanedAmount}.`
-        : cleanedAmount),
+      cleanedAmount,
       amounts[1],
     ])
   }
