@@ -18,6 +18,7 @@ const instance = axios.create({
 })
 
 // Add API key to each requests.
+// On real project, there should be a proxy for hidding api key.
 instance.interceptors.request.use((request) => {
   request.params = {
     ...request.params,
@@ -36,7 +37,6 @@ export const fetchRates = async () => {
       data: {
         JPY: 115.04233,
         CNY: 6.33453,
-        USD: 1,
         EUR: 2,
         GBP: 0.5,
       }
@@ -45,8 +45,8 @@ export const fetchRates = async () => {
 
 
   // try {
-  // const response = await instance.get('/latest')
-  // return response.data as ApiResponse;
+  //   const response = await instance.get('/latest')
+  //   return response.data as ApiResponse;
   // } catch (error: any) {
   //   if (error.response) {
   //     // Request made and server responded

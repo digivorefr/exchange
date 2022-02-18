@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { InferProps } from 'prop-types';
 import { RootState } from '../../app/store';
 import { fetchRates } from './ratesAPI';
 
@@ -18,6 +17,12 @@ export interface RatesState {
   currencies: Currency[];
   rates: Rates;
   status: 'init' | 'loading' | 'loaded' | 'failed';
+}
+
+export interface ConvertCurrencyPayload {
+  amount: number;
+  from: Currency;
+  to: Currency,
 }
 
 
@@ -39,10 +44,10 @@ export const refreshRates = createAsyncThunk(
     const response = await fetchRates();
     if (response === undefined) return null;
     // The value we return becomes the `fulfilled` action payload
-    const { USD, GBP, EUR } = response.data;
+    const { GBP, EUR } = response.data;
     // Remove unwanted currencies, and avoid any float number to prevent wrong calculations
     return {
-      USD: USD * 100000,
+      USD: 1 * 100000,
       GBP: GBP * 100000,
       EUR: EUR * 100000,
     };

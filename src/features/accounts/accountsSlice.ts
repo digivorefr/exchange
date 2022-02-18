@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import PropTypes, { InferProps } from 'prop-types';
-import { RootState, AppThunk } from '../../app/store';
+import { RootState } from '../../app/store';
 import { Currency } from '../rates/ratesSlice';
 
 export const accountsPropTypes = {
@@ -21,7 +21,7 @@ export interface UpdateAccountPayload {
   amount: number;
 }
 
-// Mock for usually retrieved data
+// Mock for API retrieved data in real world
 const initialState: AccountsState = {
   status: 'loaded',
   accounts: {
@@ -30,6 +30,14 @@ const initialState: AccountsState = {
     EUR: 14567891.96,
   }
 }
+
+export const exchange = createAsyncThunk(
+  'accounts/exchange',
+  async (conf: { from: { currency: Currency, amount: string }, to: Currency }): Promise<string> => {
+    // call api qui valide les changement et qui renvoit de nouveaux montants, qui sont poussés au store
+    return 'wesh';
+  }
+);
 
 export const accountsSlice = createSlice({
   name: 'accounts',

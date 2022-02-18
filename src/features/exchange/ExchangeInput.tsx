@@ -1,28 +1,39 @@
 import * as React from 'react';
 import PropTypes, { InferProps } from 'prop-types';
-import { Currency, currencyPropTypes, selectRates } from '../rates/ratesSlice';
+import { Currency, currencyPropTypes } from '../rates/ratesSlice';
 import { useAppSelector } from '../../app/hooks';
 import { selectCurrencies } from '../rates/ratesSlice';
 import { selectAccounts } from '../accounts/accountsSlice';
 
+export const amountPropTypes = {
+  value: PropTypes.string.isRequired,
+  currency: PropTypes.oneOf(currencyPropTypes).isRequired,
+  status: PropTypes.oneOf(['init', '', 'exceeded']),
+}
+
+export type Amount = InferProps<typeof amountPropTypes>;
+
 const propTypes = {
-  selectedCurrency: PropTypes.oneOf(currencyPropTypes).isRequired,
-  amount: PropTypes.string.isRequired,
+  amount: PropTypes.shape(amountPropTypes).isRequired,
   onChangeAmount: PropTypes.func.isRequired,
   onChangeCurrency: PropTypes.func.isRequired,
 }
 
 export default function ExchangeInput(props: InferProps<typeof propTypes>): JSX.Element | null {
   const currencies = useAppSelector(selectCurrencies);
-  const { rates, status: ratesStatus } = useAppSelector(selectRates)
   const { accounts, status: accountsStatus } = useAppSelector(selectAccounts);
-  const { selectedCurrency, amount, onChangeAmount, onChangeCurrency } = props;
+  const { amount, onChangeAmount, onChangeCurrency } = props;
 
   if (accountsStatus !== 'loaded') return null;
 
+  const className = `Exchange__input${amount.status === 'exceeded'
+    ? ` exceeded`
+    : ''
+    }`
+
   return (
-    <div className={`Exchange__input${ratesStatus !== 'loaded' ? ' disabled' : ''}`}>
-      <select onChange={onChangeCurrency} value={selectedCurrency}>
+    <div className={className}>
+      <select onChange={onChangeCurrency} value={amount.currency}>
         {currencies.map((currency) => (
           <option key={currency} value={`${currency}`}>
             {currency}
@@ -31,14 +42,10 @@ export default function ExchangeInput(props: InferProps<typeof propTypes>): JSX.
       </select>
 
       <div>
-        {`Balance: ${accounts[selectedCurrency as Currency]} ${selectedCurrency}`}
+        {`Balance: ${accounts[amount.currency as Currency]} ${amount.currency}`}
       </div>
 
-      <input type="text" value={amount} onChange={onChangeAmount} />
-
-      <div>
-        {`USD:${selectedCurrency} : ${rates[selectedCurrency as Currency]}`}
-      </div>
+      <input type="text" value={amount.value === '0' ? '' : amount.value} placeholder="0" onChange={onChangeAmount} />
     </div>
   );
 }

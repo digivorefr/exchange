@@ -27,3 +27,12 @@ input[type='number'] {
   opacity: 0.3;
   pointer-events: none;
 }
+
+.Exchange {
+  position: relative;
+  max-width: 480px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
