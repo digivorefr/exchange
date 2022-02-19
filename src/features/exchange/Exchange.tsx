@@ -37,8 +37,6 @@ export default function Exchange(): JSX.Element | null {
 
   // Set disabled status
   React.useEffect(() => {
-    console.log('effect')
-
     setDisabled(
       ratesStatus !== 'loaded'
       || accountsStatus !== 'loaded'
@@ -139,22 +137,22 @@ export default function Exchange(): JSX.Element | null {
 
 
   return (
-    <form className="Exchange" onSubmit={onSubmit}>
-      <div className="Exchange__rate">
-        {`1 ${amounts[0].currency} = ${rate.toFixed(6)} ${amounts[1].currency}`}
-      </div>
+    <form className="Exchange" data-disabled={(accountsStatus !== 'loaded') ? true : undefined} onSubmit={onSubmit}>
       From<ExchangeInput
         amount={amounts[0]}
         onChangeAmount={(e: React.FormEvent<HTMLInputElement>) => onChangeAmount(e.currentTarget.value, 0)}
         onChangeCurrency={(e: React.FormEvent<HTMLSelectElement>) => onChangeCurrency(e, 0)}
       />
-      <button type="button" onClick={onRevertClick}>Revert</button>
+      <button className="revert" data-icon="--exchange" type="button" onClick={onRevertClick}></button>
       To<ExchangeInput
         amount={amounts[1]}
         onChangeAmount={(e: React.FormEvent<HTMLInputElement>) => onChangeAmount(e.currentTarget.value, 1)}
         onChangeCurrency={(e: React.FormEvent<HTMLSelectElement>) => onChangeCurrency(e, 1)}
       />
-      <button type="submit" disabled={disabled}>Exchange</button>
+      <button data-bt="--primary" type="submit" disabled={disabled}>Exchange</button>
+      <div className="Exchange__rate">
+        {`1 ${amounts[0].currency} = ${rate.toFixed(6)} ${amounts[1].currency}`}
+      </div>
     </form>
   )
 }

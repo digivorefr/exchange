@@ -24,7 +24,7 @@ export default function ExchangeInput(props: InferProps<typeof propTypes>): JSX.
   const { accounts, status: accountsStatus } = useAppSelector(selectAccounts);
   const { amount, onChangeAmount, onChangeCurrency } = props;
 
-  if (accountsStatus !== 'loaded') return null;
+  // if (accountsStatus !== 'loaded') return null;
 
   const className = `Exchange__input${amount.status === 'exceeded'
     ? ` exceeded`
@@ -33,20 +33,20 @@ export default function ExchangeInput(props: InferProps<typeof propTypes>): JSX.
 
   return (
     <div className={className}>
-      <select onChange={onChangeCurrency} value={amount.currency}>
-        {currencies.map((currency) => (
-          <option key={currency} value={`${currency}`}>
-            {currency}
-          </option>
-        ))}
-      </select>
-
-      <div>
-        {`Balance: ${accounts[amount.currency as Currency]} ${amount.currency}`}
+      <div className="wrapper">
+        <select className="select" onChange={onChangeCurrency} value={amount.currency}>
+          {currencies.map((currency) => (
+            <option key={currency} value={`${currency}`}>
+              {currency}
+            </option>
+          ))}
+        </select>
+        <input className="amount" type="text" value={amount.value === '0' ? '' : amount.value} placeholder="0" onChange={onChangeAmount} />
       </div>
-
-      <input type="text" value={amount.value === '0' ? '' : amount.value} placeholder="0" onChange={onChangeAmount} />
-    </div>
+      <div className="balance">
+        {`Balance: ${amount.currency} ${accounts[amount.currency as Currency]}`}
+      </div>
+    </div >
   );
 }
 

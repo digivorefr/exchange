@@ -1,0 +1,60 @@
+.Exchange {
+  &__rate {
+    font-size: 0.8rem;
+    font-weight: bold;
+    opacity: 0.5;
+  }
+
+  &__input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .wrapper {
+      --wrapper-bg: transparent;
+
+      display: flex;
+      gap: 0.25rem;
+      padding: 1rem;
+      border: 1px solid rgba(var(--dark-rgb), 0.075);
+      border-radius: 3px;
+      background: var(--wrapper-bg);
+    }
+
+    &.exceeded {
+      .wrapper {
+        --wrapper-bg: var(--alert);
+      }
+
+      .balance {
+        opacity: 1;
+        color: var(--alert);
+        font-weight: bold;
+      }
+    }
+
+    .select,
+    .amount {
+      border: none;
+      padding: none;
+      outline: none;
+      background: transparent;
+      padding: 0;
+    }
+
+    .amount {
+      flex: 1;
+      min-width: 0;
+      width: auto;
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .balance {
+      padding: 0 1rem;
+      text-align: right;
+      font-size: 0.8rem;
+      opacity: 0.5;
+    }
+  }
+}

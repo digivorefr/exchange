@@ -1,0 +1,46 @@
+// Buttons design system.
+[data-bt] {
+  // Set CSS variables with defaults.
+  --color: var(--dark);
+  --font-size: 1rem;
+  --background: var(--bg);
+  --background-on: var(--bg-on);
+
+  // Default button style.
+  color: var(--color);
+  border: none;
+  cursor: pointer;
+  outline: none;
+  display: block;
+  cursor: pointer;
+  padding: 1em;
+  position: relative;
+  font-size: var(--font-size);
+  max-width: 100%;
+  box-shadow: 0px 0px 0px var(--background);
+  transition: all 125ms ease-in-out;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: bold;
+  white-space: nowrap;
+  border-radius: 3px;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  background-color: var(--background);
+
+  &:visited {
+    color: var(--color);
+  }
+
+  &:hover {
+    transform: translateX(-2px) translateY(-2px);
+    box-shadow: 4px 4px 0px var(--background);
+    transition-duration: 70ms;
+    background-color: var(--background-on);
+  }
+}
+
+[data-bt*='--primary'] {
+  --background: var(--primary);
+  --background-on: var(--primary-on);
+  --color: var(--light);
+}
