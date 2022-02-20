@@ -35,7 +35,7 @@ export interface UpdateAccountPayload {
 }
 
 // Mock for API retrieved data in real world
-const initialState: AccountsState = {
+export const initialState: AccountsState = {
   status: 'loaded',
   accounts: {
     USD: 45.68,

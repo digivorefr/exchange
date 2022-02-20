@@ -13,13 +13,9 @@ interface ApiResponse {
 }
 
 
-const instance = axios.create({
-  baseURL: 'https://freecurrencyapi.net/api/v2',
-})
-
 // Add API key to each requests.
 // On real project, there should be a proxy for hidding api key.
-instance.interceptors.request.use((request) => {
+axios.interceptors.request.use((request) => {
   request.params = {
     ...request.params,
     apikey: 'ad8255b0-8fd2-11ec-8d86-c516c5cdb260'
@@ -45,21 +41,10 @@ export const fetchRates = async () => {
 
 
   try {
-    const response = await instance.get('/latest')
+    const response = await axios.get('https://freecurrencyapi.net/api/v2/latest')
     return response.data as ApiResponse;
-  } catch (error: any) {
-    if (error.response) {
-      // Request made and server responded
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.log(error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.message);
-    }
+  } catch {
+    return undefined;
   }
 
 }

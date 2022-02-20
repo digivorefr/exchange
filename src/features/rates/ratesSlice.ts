@@ -27,7 +27,7 @@ export interface ConvertCurrencyPayload {
 }
 
 
-const initialState: RatesState = {
+export const initialState: RatesState = {
   base: 'USD',
   currencies: allowedCurrencies,
   rates: {
@@ -42,16 +42,22 @@ const initialState: RatesState = {
 export const refreshRates = createAsyncThunk(
   'rates/refresh',
   async () => {
-    const response = await api.fetchRates();
-    if (response === undefined) return null;
-    // The value we return becomes the `fulfilled` action payload
-    const { GBP, EUR } = response.data;
-    // Remove unwanted currencies, and avoid any float number to prevent wrong calculations
-    return {
-      USD: 1 * 100000,
-      GBP: GBP * 100000,
-      EUR: EUR * 100000,
-    };
+    try {
+      const response = await api.fetchRates();
+      if (response === undefined) {
+        return null;
+      }
+      // The value we return becomes the `fulfilled` action payload
+      const { GBP, EUR } = response.data;
+      // Remove unwanted currencies, and avoid any float number to prevent wrong calculations
+      return {
+        USD: 1 * 100000,
+        GBP: GBP * 100000,
+        EUR: EUR * 100000,
+      };
+    } catch {
+      return null;
+    }
   }
 );
 

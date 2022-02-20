@@ -88,7 +88,7 @@ export const computeAmountsFromChange = (updatedAmount: string, amountIndex: num
       ...amount,
       value: cleanedAmount,
       // Evaluate status
-      status: (parseFloat(cleanedAmount) > accounts[amount.currency as Currency]) ? 'exceeded' : ''
+      status: (index === 0 && parseFloat(cleanedAmount) > accounts[amount.currency as Currency]) ? 'exceeded' : ''
     } as Amount;
 
     // Compute conversion value for other amount
@@ -99,7 +99,7 @@ export const computeAmountsFromChange = (updatedAmount: string, amountIndex: num
       ...amount,
       // Remove unwanted decimals
       value: `${Math.round(newAmount * 100) / 100}`,
-      status: '',
+      status: (index === 0 && newAmount > accounts[amount.currency as Currency]) ? 'exceeded' : ''
     } as Amount;
   });
 
