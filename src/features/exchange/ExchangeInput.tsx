@@ -22,10 +22,10 @@ const propTypes = {
 
 export default function ExchangeInput(props: InferProps<typeof propTypes>): JSX.Element | null {
   const currencies = useAppSelector(selectCurrencies);
-  const { accounts } = useAppSelector(selectAccounts);
+  const { accounts, status: accountsStatus } = useAppSelector(selectAccounts);
   const { id, amount, onChangeAmount, onChangeCurrency } = props;
 
-  // if (accountsStatus !== 'loaded') return null;
+  if (accountsStatus !== 'loaded') return null;
 
   const className = `Exchange__input${amount.status === 'exceeded'
     ? ` exceeded`
