@@ -24,27 +24,10 @@ axios.interceptors.request.use((request) => {
 })
 
 export const fetchRates = async () => {
-  // return new Promise<ApiResponse>((resolve) =>
-  //   setTimeout(() => resolve({
-  //     query: {
-  //       base_currency: 'USD',
-  //       timestamp: 1645091939,
-  //     },
-  //     data: {
-  //       JPY: 115.04233,
-  //       CNY: 6.33453,
-  //       EUR: 2,
-  //       GBP: 0.5,
-  //     }
-  //   }), 500)
-  // );
-
-
   try {
     const response = await axios.get('https://freecurrencyapi.net/api/v2/latest')
     return response.data as ApiResponse;
   } catch {
     return undefined;
   }
-
 }

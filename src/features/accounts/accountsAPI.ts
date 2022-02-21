@@ -1,12 +1,12 @@
 import { ExchangePayload, ExchangeResponse } from "./accountsSlice";
-import { convert } from './../../app/helpers'
-import * as RateApi from './../rates/ratesAPI'
+import { convert } from '../../app/helpers'
+import * as RateApi from '../rates/ratesAPI'
 import { Rates } from "../rates/ratesSlice";
 
 // Fake call to API that usually handles amount change and return new amounts.
 export async function mockExchangeApiCall(payload: ExchangePayload): Promise<ExchangeResponse> {
   const response = await RateApi.fetchRates();
-  if (response === undefined) return {};
+  if (response === undefined) return Promise.reject('No rates available');
   const { GBP, EUR } = response.data;
   const rates: Rates = {
     USD: 1,
@@ -14,6 +14,7 @@ export async function mockExchangeApiCall(payload: ExchangePayload): Promise<Exc
     GBP,
   }
   // This code is a dirty one, mocking API, just for the test.
+  // Returns amounts to be added/subtracted to accounts
   return new Promise((resolve) => {
     setTimeout(() => {
       const { from, to } = payload;

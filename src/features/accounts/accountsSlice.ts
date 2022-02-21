@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import PropTypes, { InferProps } from 'prop-types';
 import { RootState } from '../../app/store';
 import { Currency } from '../rates/ratesSlice';
-import * as api from './apiClient';
+import * as api from './accountsAPI';
 
 export const accountsPropTypes = {
   USD: PropTypes.number.isRequired,
@@ -38,9 +38,9 @@ export interface UpdateAccountPayload {
 export const initialState: AccountsState = {
   status: 'loaded',
   accounts: {
-    USD: 45.68,
-    GBP: 347.31,
-    EUR: 145.96,
+    USD: 100,
+    GBP: 100,
+    EUR: 100,
   }
 }
 
@@ -53,10 +53,6 @@ export const accountsSlice = createSlice({
   name: 'accounts',
   initialState,
   reducers: {
-    updateBalance: (state, action: PayloadAction<UpdateAccountPayload>) => {
-      const { account, amount } = action.payload;
-      state.accounts[account] = state.accounts[account] + amount;
-    }
   },
   extraReducers: (builder) => {
     builder
@@ -70,10 +66,11 @@ export const accountsSlice = createSlice({
         })
         state.status = 'loaded'
       })
+      .addCase(exchange.rejected, (state, action) => {
+        state.status = 'failed'
+      })
   }
 })
-
-export const { updateBalance } = accountsSlice.actions;
 
 
 export const selectAccounts = (state: RootState) => ({

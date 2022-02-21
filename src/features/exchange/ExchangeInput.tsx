@@ -14,6 +14,7 @@ export const amountPropTypes = {
 export type Amount = InferProps<typeof amountPropTypes>;
 
 const propTypes = {
+  id: PropTypes.string.isRequired,
   amount: PropTypes.shape(amountPropTypes).isRequired,
   onChangeAmount: PropTypes.func.isRequired,
   onChangeCurrency: PropTypes.func.isRequired,
@@ -21,8 +22,8 @@ const propTypes = {
 
 export default function ExchangeInput(props: InferProps<typeof propTypes>): JSX.Element | null {
   const currencies = useAppSelector(selectCurrencies);
-  const { accounts, status: accountsStatus } = useAppSelector(selectAccounts);
-  const { amount, onChangeAmount, onChangeCurrency } = props;
+  const { accounts } = useAppSelector(selectAccounts);
+  const { id, amount, onChangeAmount, onChangeCurrency } = props;
 
   // if (accountsStatus !== 'loaded') return null;
 
@@ -32,7 +33,8 @@ export default function ExchangeInput(props: InferProps<typeof propTypes>): JSX.
     }`
 
   return (
-    <div className={className}>
+    <label className={className} id={`Exchange__input--${id}`} htmlFor={`amount-${id}-input`}>
+      <div>{id}</div>
       <div className="wrapper">
         <select className="select" onChange={onChangeCurrency} value={amount.currency}>
           {currencies.map((currency) => (
@@ -41,12 +43,20 @@ export default function ExchangeInput(props: InferProps<typeof propTypes>): JSX.
             </option>
           ))}
         </select>
-        <input className="amount" type="text" value={amount.value === '0' ? '' : amount.value} placeholder="0" onChange={onChangeAmount} />
+        <input
+          id={`amount-${id}-input`}
+          className="amount"
+          type="text"
+          value={amount.value === '0' ? '' : amount.value}
+          placeholder="0"
+          onChange={onChangeAmount}
+          pattern="\d*"
+          inputMode="decimal" />
       </div>
       <div className="balance">
         {`Balance: ${amount.currency} ${accounts[amount.currency as Currency]}`}
       </div>
-    </div >
+    </label >
   );
 }
 

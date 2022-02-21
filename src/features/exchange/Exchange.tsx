@@ -138,13 +138,15 @@ export default function Exchange(): JSX.Element | null {
 
   return (
     <form className="Exchange" data-disabled={(accountsStatus !== 'loaded') ? true : undefined} onSubmit={onSubmit}>
-      From<ExchangeInput
+      <ExchangeInput
+        id="From"
         amount={amounts[0]}
         onChangeAmount={(e: React.FormEvent<HTMLInputElement>) => onChangeAmount(e.currentTarget.value, 0)}
         onChangeCurrency={(e: React.FormEvent<HTMLSelectElement>) => onChangeCurrency(e, 0)}
       />
       <button className="revert" data-icon="--exchange" type="button" onClick={onRevertClick}></button>
-      To<ExchangeInput
+      <ExchangeInput
+        id="To"
         amount={amounts[1]}
         onChangeAmount={(e: React.FormEvent<HTMLInputElement>) => onChangeAmount(e.currentTarget.value, 1)}
         onChangeCurrency={(e: React.FormEvent<HTMLSelectElement>) => onChangeCurrency(e, 1)}
